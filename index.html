@@ -35,7 +35,7 @@ header h1 span{color:var(--orange);font-style:italic;}
 .btn-small:hover{border-color:var(--orange);color:var(--orange);}
 
 #tree-canvas{flex:1;overflow:auto;padding:2.5rem 3rem 6rem;}
-#tree-inner{display:inline-block;min-width:100%;}
+#tree-inner{display:inline-block;min-width:100%;transform-origin:top left;transition:transform 0.15s ease;}
 
 .node{display:flex;flex-direction:column;align-items:center;}
 .couple{display:flex;align-items:flex-start;}
@@ -109,8 +109,11 @@ select option{background:#1a1713;}
 
 <div class="toolbar">
   <span class="toolbar-info" id="count-label">Cargando…</span>
-  <button class="btn-small" onclick="exportJSON()">↓ Exportar JSON</button>
-  <button class="btn-small" onclick="importJSON()">↑ Importar JSON</button>
+  <button class="btn-small" onclick="zoomOut()">− Zoom</button>
+  <button class="btn-small" onclick="zoomReset()">100%</button>
+  <button class="btn-small" onclick="zoomIn()">+ Zoom</button>
+  <button class="btn-small" onclick="exportJSON()">↓ Exportar</button>
+  <button class="btn-small" onclick="importJSON()">↑ Importar</button>
   <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
 </div>
 
@@ -559,6 +562,33 @@ function handleImport(e) {
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
+// ══════════════════════════════════════════
+// ZOOM
+// ══════════════════════════════════════════
+let zoomLevel = 1;
+const ZOOM_STEP = 0.1;
+const ZOOM_MIN = 0.2;
+const ZOOM_MAX = 2;
+
+function applyZoom() {
+  document.getElementById('tree-inner').style.transform = `scale(${zoomLevel})`;
+  // Update label
+  const label = document.getElementById('count-label');
+  const base = label.textContent.replace(/\s·\s\d+%$/, '');
+  label.textContent = base + ` · ${Math.round(zoomLevel*100)}%`;
+}
+function zoomIn()    { zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel + ZOOM_STEP).toFixed(2)); applyZoom(); }
+function zoomOut()   { zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel - ZOOM_STEP).toFixed(2)); applyZoom(); }
+function zoomReset() { zoomLevel = 1; applyZoom(); }
+
+// Ctrl+scroll or pinch to zoom
+document.getElementById('tree-canvas').addEventListener('wheel', e => {
+  if (e.ctrlKey || e.metaKey) {
+    e.preventDefault();
+    e.deltaY < 0 ? zoomIn() : zoomOut();
+  }
+}, { passive: false });
+
 loadLocal();
 loadFromBin();
 </script>
