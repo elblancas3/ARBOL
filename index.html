@@ -7,147 +7,103 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0f0d0a;
-  --surface: #1a1713;
-  --border: #2e2820;
-  --orange: #D85A30;
-  --orange-light: #e8784f;
-  --cream: #f0e8d8;
-  --muted: #8a7d6a;
-  --female: #c4805a;
-  --male: #5a8ab0;
-  --line: #3a3025;
+  --bg: #0f0d0a; --surface: #1a1713; --border: #2e2820;
+  --orange: #D85A30; --orange-light: #e8784f;
+  --cream: #f0e8d8; --muted: #8a7d6a;
+  --female: #c4805a; --male: #5a8ab0; --line: #3a3025;
   --card-w: 170px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body {
-  background: var(--bg);
-  color: var(--cream);
-  font-family: 'Barlow Condensed', sans-serif;
-  height: 100%;
-  overflow: hidden;
-}
-header {
-  padding: 1.2rem 2rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  background: var(--bg);
-  z-index: 50;
-  flex-shrink: 0;
-}
-header h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 400; }
-header h1 span { color: var(--orange); font-style: italic; }
-.legend { margin-left: auto; display: flex; gap: 1rem; align-items: center; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
-.legend-item { display: flex; align-items: center; gap: 0.35rem; }
-.legend-dot { width: 9px; height: 9px; border-radius: 50%; }
-.legend-dot.m { background: var(--male); }
-.legend-dot.f { background: var(--female); }
-.legend-dot.you { background: var(--orange); }
-.toolbar { display: flex; gap: 0.6rem; padding: 0.6rem 2rem; border-bottom: 1px solid var(--border); background: var(--bg); align-items: center; flex-shrink: 0; }
-.toolbar-info { font-size: 0.72rem; color: var(--muted); margin-right: auto; letter-spacing: 0.08em; }
-.btn-small { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 0.3rem 0.7rem; border-radius: 3px; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; transition: all 0.2s; }
-.btn-small:hover { border-color: var(--orange); color: var(--orange); }
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--cream);font-family:'Barlow Condensed',sans-serif;}
+#page-wrap{display:flex;flex-direction:column;height:100vh;}
 
-#page-wrap {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
+header{padding:1rem 2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;background:var(--bg);flex-shrink:0;}
+header h1{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:400;}
+header h1 span{color:var(--orange);font-style:italic;}
+.sync-status{font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:3px;border:1px solid var(--border);color:var(--muted);}
+.sync-status.ok{border-color:#4a7c59;color:#7bc98a;}
+.sync-status.err{border-color:#7c4a4a;color:#c98a8a;}
+.sync-status.saving{border-color:var(--orange);color:var(--orange);}
+.legend{margin-left:auto;display:flex;gap:1rem;align-items:center;font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;}
+.legend-item{display:flex;align-items:center;gap:0.35rem;}
+.legend-dot{width:9px;height:9px;border-radius:50%;}
+.legend-dot.m{background:var(--male);}.legend-dot.f{background:var(--female);}.legend-dot.you{background:var(--orange);}
 
-#tree-canvas {
-  flex: 1;
-  overflow: auto;
-  padding: 2.5rem 3rem 6rem;
-}
+.toolbar{display:flex;gap:0.6rem;padding:0.5rem 2rem;border-bottom:1px solid var(--border);background:var(--bg);align-items:center;flex-shrink:0;}
+.toolbar-info{font-size:0.72rem;color:var(--muted);margin-right:auto;letter-spacing:0.08em;}
+.btn-small{background:transparent;color:var(--muted);border:1px solid var(--border);padding:0.28rem 0.65rem;border-radius:3px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:0.73rem;text-transform:uppercase;letter-spacing:0.08em;transition:all 0.2s;}
+.btn-small:hover{border-color:var(--orange);color:var(--orange);}
 
-#tree-inner {
-  display: inline-block;
-  min-width: 100%;
-}
+#tree-canvas{flex:1;overflow:auto;padding:2.5rem 3rem 6rem;}
+#tree-inner{display:inline-block;min-width:100%;}
 
-/* node = wraps one person + their subtree */
-.node { display: flex; flex-direction: column; align-items: center; }
+.node{display:flex;flex-direction:column;align-items:center;}
+.couple{display:flex;align-items:flex-start;}
+.spouse-bridge{display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:16px;}
+.spouse-line-h{width:20px;height:2px;background:var(--muted);}
+.spouse-x{font-size:0.6rem;color:var(--muted);line-height:1;}
+.v-line{width:2px;background:var(--line);}
+.v-down{height:22px;}.v-tick{height:18px;}
+.child-col{display:flex;flex-direction:column;align-items:center;}
 
-/* couple = person card + spouse card side by side */
-.couple { display: flex; align-items: flex-start; }
-.spouse-bridge { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 16px; }
-.spouse-line-h { width: 20px; height: 2px; background: var(--muted); }
-.spouse-x { font-size: 0.6rem; color: var(--muted); line-height: 1; }
+.person-card{background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:0.55rem 0.7rem;cursor:pointer;transition:all 0.18s;width:var(--card-w);flex-shrink:0;user-select:none;}
+.person-card:hover{border-color:var(--orange);transform:translateY(-2px);box-shadow:0 4px 16px rgba(216,90,48,0.15);}
+.person-card.selected{border-color:var(--orange);background:#221a12;}
+.person-card.you{border-color:var(--orange);background:#1f1208;}
+.card-name{font-weight:600;font-size:0.8rem;letter-spacing:0.03em;text-transform:uppercase;display:flex;align-items:flex-start;gap:0.3rem;line-height:1.3;}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.card-years{font-size:0.68rem;color:var(--muted);margin-top:0.15rem;}
+.card-place{font-size:0.63rem;color:var(--orange);margin-top:0.1rem;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.role-tag{font-size:0.58rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--bg);background:var(--orange);padding:0.08rem 0.32rem;border-radius:2px;margin-top:0.28rem;display:inline-block;}
+.note-badge{width:5px;height:5px;border-radius:50%;background:var(--orange);display:inline-block;margin-left:3px;flex-shrink:0;margin-top:5px;}
 
-/* connector from couple down to children */
-.v-line { width: 2px; background: var(--line); }
-.v-down { height: 22px; }
-.v-tick { height: 18px; }
-
-/* horizontal bar linking siblings */
-.h-bar-wrap { display: flex; align-items: flex-start; position: relative; }
-.h-bar { position: absolute; top: 0; height: 2px; background: var(--line); }
-
-/* each child column */
-.child-col { display: flex; flex-direction: column; align-items: center; }
-
-/* add-child button */
-.add-child-btn { width: var(--card-w); border: 1px dashed var(--border); border-radius: 4px; padding: 0.28rem 0.5rem; cursor: pointer; color: var(--muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; transition: all 0.18s; background: transparent; margin-top: 3px; }
-.add-child-btn:hover { border-color: var(--orange); color: var(--orange); }
-.collapse-btn { width: var(--card-w); border: 1px solid var(--border); border-radius: 4px; padding: 0.28rem 0.5rem; cursor: pointer; color: var(--muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center; transition: all 0.18s; background: transparent; margin-top: 4px; }
-.collapse-btn:hover { border-color: var(--orange-light); color: var(--orange-light); }
-
-/* person card */
-.person-card { background: var(--surface); border: 1px solid var(--border); border-radius: 5px; padding: 0.55rem 0.7rem; cursor: pointer; transition: all 0.18s; width: var(--card-w); flex-shrink: 0; user-select: none; }
-.person-card:hover { border-color: var(--orange); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(216,90,48,0.15); }
-.person-card.selected { border-color: var(--orange); background: #221a12; }
-.person-card.you { border-color: var(--orange); background: #1f1208; }
-.card-name { font-weight: 600; font-size: 0.8rem; letter-spacing: 0.03em; text-transform: uppercase; display: flex; align-items: flex-start; gap: 0.3rem; line-height: 1.3; }
-.dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
-.card-years { font-size: 0.68rem; color: var(--muted); margin-top: 0.15rem; }
-.card-place { font-size: 0.63rem; color: var(--orange); margin-top: 0.1rem; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.role-tag { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bg); background: var(--orange); padding: 0.08rem 0.32rem; border-radius: 2px; margin-top: 0.28rem; display: inline-block; }
-.note-badge { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); display: inline-block; margin-left: 3px; flex-shrink: 0; margin-top: 5px; }
+.add-child-btn{width:var(--card-w);border:1px dashed var(--border);border-radius:4px;padding:0.25rem 0.5rem;cursor:pointer;color:var(--muted);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.1em;text-align:center;transition:all 0.18s;background:transparent;margin-top:3px;}
+.add-child-btn:hover{border-color:var(--orange);color:var(--orange);}
+.collapse-btn{width:var(--card-w);border:1px solid var(--border);border-radius:4px;padding:0.25rem 0.5rem;cursor:pointer;color:var(--muted);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.1em;text-align:center;transition:all 0.18s;background:transparent;margin-top:3px;}
+.collapse-btn:hover{border-color:var(--orange-light);color:var(--orange-light);}
 
 /* Detail panel */
-.detail-panel { position: fixed; right: 0; top: 0; height: 100vh; width: 285px; background: var(--surface); border-left: 1px solid var(--border); padding: 1.4rem 1.1rem; transform: translateX(100%); transition: transform 0.28s ease; overflow-y: auto; z-index: 100; }
-.detail-panel.open { transform: translateX(0); }
-.close-btn { position: absolute; top: 0.8rem; right: 0.8rem; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; }
-.detail-panel h2 { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 400; line-height: 1.3; margin-bottom: 0.5rem; }
-.detail-field { margin-top: 0.85rem; }
-.detail-field label { font-size: 0.63rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); display: block; margin-bottom: 0.18rem; }
-.detail-field p { font-size: 0.88rem; line-height: 1.4; }
-.note-text { font-style: italic; font-size: 0.8rem; line-height: 1.5; }
-.child-row { display: flex; align-items: center; justify-content: space-between; padding: 0.32rem 0; border-bottom: 1px solid var(--border); }
-.child-row span { font-size: 0.83rem; cursor: pointer; }
-.child-row span:hover { color: var(--orange); }
-.rm-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.95rem; padding: 0 0.3rem; }
-.rm-btn:hover { color: var(--orange); }
+.detail-panel{position:fixed;right:0;top:0;height:100vh;width:285px;background:var(--surface);border-left:1px solid var(--border);padding:1.4rem 1.1rem;transform:translateX(100%);transition:transform 0.28s ease;overflow-y:auto;z-index:100;}
+.detail-panel.open{transform:translateX(0);}
+.close-btn{position:absolute;top:0.8rem;right:0.8rem;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;}
+.detail-panel h2{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:400;line-height:1.3;margin-bottom:0.5rem;}
+.detail-field{margin-top:0.85rem;}
+.detail-field label{font-size:0.63rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--muted);display:block;margin-bottom:0.18rem;}
+.detail-field p{font-size:0.88rem;line-height:1.4;}
+.note-text{font-style:italic;font-size:0.8rem;line-height:1.5;}
+.child-row{display:flex;align-items:center;justify-content:space-between;padding:0.32rem 0;border-bottom:1px solid var(--border);}
+.child-row span{font-size:0.83rem;cursor:pointer;}.child-row span:hover{color:var(--orange);}
+.rm-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.95rem;padding:0 0.3rem;}
+.rm-btn:hover{color:var(--orange);}
 
 /* Modal */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 200; }
-.modal-overlay.open { display: flex; }
-.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.7rem; width: 90%; max-width: 390px; }
-.modal h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 400; margin-bottom: 0.9rem; color: var(--cream); }
-.modal label { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); display: block; margin-bottom: 0.22rem; }
-.modal input, .modal select, .modal textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 0.52rem 0.72rem; color: var(--cream); font-family: 'Barlow Condensed', sans-serif; font-size: 0.9rem; margin-bottom: 0.7rem; outline: none; transition: border-color 0.2s; }
-.modal input:focus, .modal select:focus, .modal textarea:focus { border-color: var(--orange); }
-.modal textarea { height: 72px; resize: vertical; }
-.modal-actions { display: flex; gap: 0.65rem; margin-top: 0.7rem; }
-.btn-primary { background: var(--orange); color: white; border: none; padding: 0.52rem 1rem; border-radius: 4px; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 0.86rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; transition: background 0.2s; }
-.btn-primary:hover { background: var(--orange-light); }
-.btn-secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 0.52rem 1rem; border-radius: 4px; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 0.86rem; text-transform: uppercase; letter-spacing: 0.1em; }
-select option { background: #1a1713; }
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;z-index:200;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.7rem;width:90%;max-width:390px;}
+.modal h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:400;margin-bottom:0.9rem;color:var(--cream);}
+.modal label{font-size:0.66rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);display:block;margin-bottom:0.22rem;}
+.modal input,.modal select,.modal textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:0.52rem 0.72rem;color:var(--cream);font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;margin-bottom:0.7rem;outline:none;transition:border-color 0.2s;}
+.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--orange);}
+.modal textarea{height:72px;resize:vertical;}
+.modal-actions{display:flex;gap:0.65rem;margin-top:0.7rem;}
+.btn-primary{background:var(--orange);color:white;border:none;padding:0.52rem 1rem;border-radius:4px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:0.86rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;transition:background 0.2s;}
+.btn-primary:hover{background:var(--orange-light);}
+.btn-secondary{background:transparent;color:var(--muted);border:1px solid var(--border);padding:0.52rem 1rem;border-radius:4px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:0.86rem;text-transform:uppercase;letter-spacing:0.1em;}
+select option{background:#1a1713;}
+
+/* Config modal */
+.config-section{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:0.8rem;margin-bottom:0.8rem;font-size:0.8rem;color:var(--muted);line-height:1.5;}
 </style>
 </head>
 <body>
 <div id="page-wrap">
+
 <header>
-  <div>
-    <h1>Familia <span>Blancas</span></h1>
-  </div>
+  <div><h1>Familia <span>Blancas</span></h1></div>
+  <span class="sync-status" id="sync-status">Sin conexión</span>
   <div class="legend">
     <div class="legend-item"><div class="legend-dot m"></div>Hombre</div>
     <div class="legend-item"><div class="legend-dot f"></div>Mujer</div>
-    <div class="legend-item"><div class="legend-dot you"></div>Tú</div>
   </div>
 </header>
 
@@ -158,16 +114,16 @@ select option { background: #1a1713; }
   <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
 </div>
 
-<div id="tree-canvas">
-  <div id="tree-inner"></div>
-</div>
+<div id="tree-canvas"><div id="tree-inner"></div></div>
 </div>
 
+<!-- Detail panel -->
 <div class="detail-panel" id="detail-panel">
   <button class="close-btn" onclick="closeDetail()">✕</button>
   <div id="detail-content"></div>
 </div>
 
+<!-- Person modal -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <h3 id="modal-title">Agregar persona</h3>
@@ -180,7 +136,7 @@ select option { background: #1a1713; }
     <label>Año de fallecimiento (vacío si vive)</label>
     <input type="number" id="f-death" placeholder="ej. 1986" min="1800" max="2026">
     <label>Lugar</label>
-    <input type="text" id="f-place" placeholder="ej. Apipilhuazco, Edo. Méx.">
+    <input type="text" id="f-place" placeholder="ej. Cuautla, Morelos">
     <label>Notas</label>
     <textarea id="f-notes" placeholder="Ocupación, datos históricos…"></textarea>
     <div class="modal-actions">
@@ -201,11 +157,11 @@ select option { background: #1a1713; }
     <label>Año de nacimiento</label>
     <input type="number" id="sp-birth" placeholder="ej. 1910" min="1800" max="2026">
     <label>Año de fallecimiento (vacío si vive)</label>
-    <input type="number" id="sp-death" placeholder="ej. 1978" min="1800" max="2026">
+    <input type="number" id="sp-death" min="1800" max="2026">
     <label>Lugar</label>
-    <input type="text" id="sp-place" placeholder="ej. Cuautla, Morelos">
+    <input type="text" id="sp-place">
     <label>Notas</label>
-    <textarea id="sp-notes" placeholder="Ocupación, datos relevantes…"></textarea>
+    <textarea id="sp-notes"></textarea>
     <div class="modal-actions">
       <button class="btn-primary" onclick="saveSpouse()">Guardar</button>
       <button class="btn-secondary" onclick="closeSpouseModal()">Cancelar</button>
@@ -213,30 +169,116 @@ select option { background: #1a1713; }
   </div>
 </div>
 
+<!-- Config modal -->
+<div class="modal-overlay" id="modal-config">
+  <div class="modal">
+    <h3>Configurar JSONBin</h3>
+    <div class="config-section">
+      Conecta un Bin para que todos los que abran la página compartan el mismo árbol.<br>
+      Crea tu cuenta en <strong>jsonbin.io</strong> → crea un Bin público → pega los datos aquí.
+    </div>
+    <label>Bin ID</label>
+    <input type="text" id="cfg-binid" placeholder="ej. 6847a3f2...">
+    <label>API Key (Secret Key)</label>
+    <input type="text" id="cfg-apikey" placeholder="$2b$10$...">
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="saveConfig()">Conectar</button>
+      <button class="btn-secondary" onclick="closeConfig()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// ══════════════════════════════════════════
+// JSONBIN CONFIG
+// ══════════════════════════════════════════
+let BIN_ID = '69efc087856a6821897c8974';
+let API_KEY = '$2a$10$veHVbB/pKRMjAFp2ndrsNeUA/60BeUnRMcU70d4y3KLCg8PjC241m';
+
+function openConfig() {
+  document.getElementById('cfg-binid').value = BIN_ID;
+  document.getElementById('cfg-apikey').value = API_KEY;
+  document.getElementById('modal-config').classList.add('open');
+}
+function closeConfig() { document.getElementById('modal-config').classList.remove('open'); }
+function saveConfig() {
+  BIN_ID = document.getElementById('cfg-binid').value.trim();
+  API_KEY = document.getElementById('cfg-apikey').value.trim();
+  localStorage.setItem('blancas_binid', BIN_ID);
+  localStorage.setItem('blancas_apikey', API_KEY);
+  closeConfig();
+  loadFromBin();
+}
+
+function setStatus(state, msg) {
+  const el = document.getElementById('sync-status');
+  el.textContent = msg;
+  el.className = 'sync-status ' + state;
+}
+
+async function loadFromBin() {
+  if (!BIN_ID || !API_KEY) { setStatus('err','Sin JSONBin'); return; }
+  setStatus('saving','Cargando…');
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': API_KEY }
+    });
+    const data = await res.json();
+    const loaded = data.record;
+    if (Array.isArray(loaded) && loaded.length > 0) {
+      people = loaded;
+    } else if (loaded && loaded.personas && loaded.personas.length > 0) {
+      people = loaded.personas;
+    } else {
+      // Bin vacío — sube los datos locales
+      await saveToBin();
+    }
+    setStatus('ok','Conectado ✓');
+    renderTree();
+  } catch(e) {
+    setStatus('err','Error de conexión');
+  }
+}
+
+async function saveToBin() {
+  if (!BIN_ID || !API_KEY) return;
+  setStatus('saving','Guardando…');
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type':'application/json', 'X-Master-Key': API_KEY },
+      body: JSON.stringify(people)
+    });
+    setStatus('ok','Guardado ✓');
+  } catch(e) {
+    setStatus('err','Error al guardar');
+  }
+}
+
 // ══════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════
 let people = [
-  { id:'gonzalo',   name:'Gonzalo Blancas Vázquez',        gender:'m', birth:1831, death:null, place:'Apipilhuazco, Edo. Méx.',    notes:'Tatarabuelo. Registro más antiguo de la familia Blancas en Apipilhuazco.', role:'Tatarabuelo',              children:['epifanio'], spouseId:null,      parentId:null },
-  { id:'epifanio',  name:'Epifanio Blancas',               gender:'m', birth:1876, death:null, place:'Ranchería Sta. Bárbara, Otumba', notes:'Hijo de Gonzalo Blancas Vázquez. Padre de Francisco Atanacio (acta 1904). Originario de Ranchería Santa Bárbara, Distrito de Otumba.', role:null, children:['francisco'], spouseId:'guadalupe', parentId:'gonzalo' },
-  { id:'guadalupe', name:'Guadalupe Gómez Gómez',          gender:'f', birth:1883, death:null, place:'Tepetlaoxtoc / CDMX',        notes:'Madre de Francisco Atanacio. Originaria de Tepetlaoxtoc, vecina del Distrito Federal.', role:null, children:[], spouseId:'epifanio', parentId:null },
-  { id:'francisco', name:'Francisco Atanacio Blancas Gómez', gender:'m', birth:1904, death:1986, place:'Apipilhuazco, Tepetlaoxtoc', notes:'Bisabuelo de Emilio. Nació el 18 de mayo de 1904. Veterano de la Revolución Mexicana — Segundo Período (1913–1918). División Mendoza, Gral. Francisco Mendoza Palma. Grado: Capitán. Combatió en Morelos, Puebla, Guerrero y México.', role:'Bisabuelo · Veterano Rev.', children:['sebastian','carlos','manuel','enrique','gilberto','hermelinda'], spouseId:'columba', parentId:'epifanio' },
-  { id:'columba',   name:'María Columba Méndez Sánchez',   gender:'f', birth:1910, death:1978, place:'Cuautla, Morelos',           notes:'Bisabuela de Emilio. Esposa de Francisco Atanacio.', role:null, children:[], spouseId:'francisco', parentId:null },
-  { id:'sebastian', name:'Sebastián Blancas Méndez',       gender:'m', birth:1923, death:1952, place:null,                         notes:'Hijo de Francisco Atanacio y María Columba.', role:null, children:[], spouseId:null, parentId:'francisco' },
-  { id:'carlos',    name:'Carlos Blancas Méndez',          gender:'m', birth:null, death:null, place:'Cuautla, Morelos',           notes:'Abuelo de Emilio. Beneficiario sustituto del seguro de vida de su padre.', role:'Abuelo', children:['padre'], spouseId:null, parentId:'francisco' },
-  { id:'manuel',    name:'Manuel Blancas Méndez',          gender:'m', birth:1927, death:null, place:null,                         notes:'Hijo de Francisco Atanacio y María Columba.', role:null, children:[], spouseId:null, parentId:'francisco' },
-  { id:'enrique',   name:'Enrique Blancas Méndez',         gender:'m', birth:1929, death:null, place:null,                         notes:'Hijo de Francisco Atanacio y María Columba.', role:null, children:[], spouseId:null, parentId:'francisco' },
-  { id:'gilberto',  name:'Gilberto Blancas Méndez',        gender:'m', birth:1936, death:null, place:'Cuautla, Morelos',           notes:'Hijo de Francisco Atanacio. Apoderado legal de su padre para cobrar la pensión de veterano.', role:null, children:[], spouseId:null, parentId:'francisco' },
-  { id:'hermelinda',name:'Hermelinda Blancas Méndez',      gender:'f', birth:1937, death:null, place:null,                         notes:'Hija de Francisco Atanacio y María Columba.', role:null, children:[], spouseId:null, parentId:'francisco' },
-  { id:'padre',     name:'Padre de Emilio',                gender:'m', birth:null, death:null, place:null,                         notes:'Hijo de Carlos Blancas Méndez. Por agregar datos.', role:null, children:['emilio'], spouseId:null, parentId:'carlos' },
-  { id:'emilio',    name:'Emilio Blancas',                 gender:'m', birth:null, death:null, place:'Monterrey, N.L.',            notes:'Arquitecto, diseñador y geomático. Fundador de Blancas & Gómez Taller y Geomática MX. Trabaja en la restauración del Rancho Apipilhuazco — donde nació su bisabuelo en 1904.', role:'Tú', children:[], spouseId:null, parentId:'padre' }
+  { id:'gonzalo',    name:'Gonzalo Blancas Vázquez',          gender:'m', birth:1831, death:null, place:'Estado de México',             notes:'Tatarabuelo. Registro más antiguo de la familia Blancas.', role:'Tatarabuelo', children:['epifanio'], spouseId:null, parentId:null },
+  { id:'epifanio',   name:'Epifanio Blancas',                 gender:'m', birth:1876, death:null, place:'Ranchería Sta. Bárbara, Otumba',notes:'Hijo de Gonzalo Blancas Vázquez. Padre de Francisco Atanacio (confirmado en acta de 1904).', role:null, children:['francisco'], spouseId:'guadalupe', parentId:'gonzalo' },
+  { id:'guadalupe',  name:'Guadalupe Gómez Gómez',            gender:'f', birth:1883, death:null, place:'Tepetlaoxtoc / CDMX',          notes:'Madre de Francisco Atanacio. Originaria de Tepetlaoxtoc.', role:null, children:[], spouseId:'epifanio', parentId:null },
+  { id:'francisco',  name:'Francisco Atanacio Blancas Gómez', gender:'m', birth:1904, death:1986, place:'Tepetlaoxtoc, Edo. Méx.',      notes:'Bisabuelo de Emilio. Nació el 18 de mayo de 1904. Veterano de la Revolución Mexicana — Segundo Período (1913–1918). División Mendoza, Gral. Francisco Mendoza Palma. Grado: Capitán. Combatió en Morelos, Puebla, Guerrero y México.', role:'Bisabuelo · Veterano Rev.', children:['sebastian','carlos','manuel','enrique','gilberto','hermelinda'], spouseId:'columba', parentId:'epifanio' },
+  { id:'columba',    name:'María Columba Méndez Sánchez',     gender:'f', birth:1910, death:1978, place:'Cuautla, Morelos',             notes:'Bisabuela de Emilio. Esposa de Francisco Atanacio.', role:null, children:[], spouseId:'francisco', parentId:null },
+  { id:'sebastian',  name:'Sebastián Blancas Méndez',         gender:'m', birth:1923, death:1952, place:null,                           notes:'Hijo de Francisco Atanacio y María Columba.', role:null, children:[], spouseId:null, parentId:'francisco' },
+  { id:'carlos',     name:'Carlos Blancas Méndez',            gender:'m', birth:null, death:null, place:'Cuautla, Morelos',             notes:'Abuelo de Emilio. Beneficiario sustituto del seguro de vida de su padre.', role:'Abuelo', children:['padre'], spouseId:null, parentId:'francisco' },
+  { id:'manuel',     name:'Manuel Blancas Méndez',            gender:'m', birth:1927, death:null, place:null,                           notes:'Hijo de Francisco Atanacio y María Columba.', role:null, children:[], spouseId:null, parentId:'francisco' },
+  { id:'enrique',    name:'Enrique Blancas Méndez',           gender:'m', birth:1929, death:null, place:null,                           notes:'Hijo de Francisco Atanacio y María Columba.', role:null, children:[], spouseId:null, parentId:'francisco' },
+  { id:'gilberto',   name:'Gilberto Blancas Méndez',          gender:'m', birth:1936, death:null, place:'Cuautla, Morelos',             notes:'Hijo de Francisco Atanacio. Apoderado legal de su padre para cobrar pensión de veterano.', role:null, children:[], spouseId:null, parentId:'francisco' },
+  { id:'hermelinda', name:'Hermelinda Blancas Méndez',        gender:'f', birth:1937, death:null, place:null,                           notes:'Hija de Francisco Atanacio y María Columba.', role:null, children:[], spouseId:null, parentId:'francisco' },
+  { id:'padre',      name:'Padre de Emilio',                  gender:'m', birth:null, death:null, place:null,                           notes:'Hijo de Carlos Blancas Méndez. Por agregar datos.', role:null, children:['emilio'], spouseId:null, parentId:'carlos' },
+  { id:'emilio',     name:'Emilio Blancas',                   gender:'m', birth:null, death:null, place:'Monterrey, N.L.',              notes:'Arquitecto, diseñador y geomático. Fundador de Blancas & Gómez Taller y Geomática MX. Trabaja en la restauración de la hacienda familiar — donde nació su bisabuelo en 1904.', role:null, children:[], spouseId:null, parentId:'padre' }
 ];
 
 let editingId = null;
 let addingParentId = null;
+let addingSpouseForId = null;
 let selectedId = null;
-let collapsed = new Set(); // ids with hidden children
+let collapsed = new Set();
 
 // ══════════════════════════════════════════
 // HELPERS
@@ -247,8 +289,7 @@ const dotClr = p => p.id === 'emilio' ? 'var(--orange)' : p.gender === 'f' ? 'va
 const yrsStr = p => p.birth && p.death ? `${p.birth} – ${p.death}` : p.birth ? `n. ${p.birth}` : p.death ? `† ${p.death}` : '';
 
 function toggleCollapse(id) {
-  if (collapsed.has(id)) collapsed.delete(id);
-  else collapsed.add(id);
+  collapsed.has(id) ? collapsed.delete(id) : collapsed.add(id);
   renderTree();
 }
 
@@ -267,51 +308,35 @@ function renderNode(id) {
   const children = getChildren(id);
   const isCollapsed = collapsed.has(id);
 
-  // Build couple HTML
-  let coupleHTML = `<div class="couple">
-    ${cardHTML(p)}`;
+  let coupleHTML = `<div class="couple">${cardHTML(p)}`;
   if (spouse) {
-    coupleHTML += `
-    <div class="spouse-bridge">
-      <div class="spouse-line-h"></div>
-      <div class="spouse-x">×</div>
-      <div class="spouse-line-h"></div>
-    </div>
-    ${cardHTML(spouse)}`;
+    coupleHTML += `<div class="spouse-bridge"><div class="spouse-line-h"></div><div class="spouse-x">×</div><div class="spouse-line-h"></div></div>${cardHTML(spouse)}`;
   }
   coupleHTML += `</div>`;
 
-  // Collapse toggle button (only if has children)
   let toggleBtn = '';
   if (children.length > 0) {
-    toggleBtn = `<div class="collapse-btn" onclick="toggleCollapse('${p.id}')" title="${isCollapsed ? 'Expandir' : 'Contraer'}">
-      ${isCollapsed ? `▼ ${children.length} hijo${children.length>1?'s':''}` : '▲ contraer'}
+    toggleBtn = `<div class="collapse-btn" onclick="toggleCollapse('${p.id}')">
+      ${isCollapsed ? `▼ ver ${children.length} hijo${children.length>1?'s':''}` : '▲ contraer'}
     </div>`;
   }
 
-  // Add child button
   const addBtn = `<div class="add-child-btn" onclick="openAddChild('${p.id}')">+ hijo/a</div>`;
 
-  // Children
   let childrenHTML = '';
   if (!isCollapsed && children.length === 1) {
-    childrenHTML = `
-      <div class="v-line v-down"></div>
-      ${renderNode(children[0].id)}`;
+    childrenHTML = `<div class="v-line v-down"></div>${renderNode(children[0].id)}`;
   } else if (!isCollapsed && children.length > 1) {
-    const colPad = 10;
-    const cardW = 170;
-    const halfCard = cardW / 2;
+    const colPad = 10, cardW = 170, half = cardW / 2;
     const cols = children.map(c => `
       <div class="child-col" style="padding:0 ${colPad}px">
         <div class="v-line v-tick"></div>
         ${renderNode(c.id)}
       </div>`).join('');
-
     childrenHTML = `
       <div class="v-line v-down"></div>
       <div style="position:relative;display:inline-flex;align-items:flex-start;">
-        <div style="position:absolute;top:0;left:${colPad + halfCard}px;right:${colPad + halfCard}px;height:2px;background:var(--line)"></div>
+        <div style="position:absolute;top:0;left:${colPad+half}px;right:${colPad+half}px;height:2px;background:var(--line)"></div>
         ${cols}
       </div>`;
   }
@@ -338,8 +363,7 @@ function cardHTML(p) {
 // ══════════════════════════════════════════
 function showDetail(id) {
   selectedId = id;
-  const p = byId(id);
-  if (!p) return;
+  const p = byId(id); if (!p) return;
   const yrs = yrsStr(p);
   const parent = p.parentId ? byId(p.parentId) : null;
   const spouse = p.spouseId ? byId(p.spouseId) : null;
@@ -355,7 +379,7 @@ function showDetail(id) {
   const spouseHTML = spouse
     ? `<div class="child-row">
         <span onclick="showDetail('${spouse.id}')">${spouse.name}</span>
-        <button class="rm-btn" onclick="removeSpouse('${id}')" title="Quitar cónyuge">×</button>
+        <button class="rm-btn" onclick="removeSpouse('${id}')">×</button>
        </div>`
     : `<button class="btn-primary" style="width:100%;margin-top:0.3rem;font-size:0.78rem" onclick="openAddSpouse('${id}')">+ Agregar cónyuge</button>`;
 
@@ -369,12 +393,10 @@ function showDetail(id) {
     ${p.place?`<div class="detail-field"><label>Lugar</label><p>${p.place}</p></div>`:''}
     ${parent?`<div class="detail-field"><label>Padre/Madre</label><p style="cursor:pointer;color:var(--orange-light)" onclick="showDetail('${parent.id}')">${parent.name}</p></div>`:''}
     ${p.notes?`<div class="detail-field"><label>Notas</label><p class="note-text">${p.notes}</p></div>`:''}
-
     <div class="detail-field" style="margin-top:1rem">
       <label>Cónyuge</label>
       <div style="margin-top:0.3rem">${spouseHTML}</div>
     </div>
-
     <div class="detail-field" style="margin-top:1rem">
       <label>Hijos (${children.length})</label>
       <div style="margin-top:0.3rem">${chHtml}</div>
@@ -396,33 +418,68 @@ function closeDetail() {
 }
 
 // ══════════════════════════════════════════
-// CHILD MANAGEMENT
+// SPOUSE
+// ══════════════════════════════════════════
+function openAddSpouse(personId) {
+  addingSpouseForId = personId;
+  const p = byId(personId);
+  document.getElementById('modal-spouse-title').textContent = `Agregar cónyuge de ${p?p.name.split(' ')[0]:''}`;
+  ['sp-name','sp-birth','sp-death','sp-place','sp-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sp-gender').value = p && p.gender==='m' ? 'f' : 'm';
+  document.getElementById('modal-spouse').classList.add('open');
+}
+function closeSpouseModal() { document.getElementById('modal-spouse').classList.remove('open'); addingSpouseForId=null; }
+function saveSpouse() {
+  const name = document.getElementById('sp-name').value.trim();
+  if (!name) { alert('Ingresa un nombre'); return; }
+  const newId = 'sp_'+Date.now();
+  people.push({
+    id:newId, name, gender:document.getElementById('sp-gender').value,
+    birth:parseInt(document.getElementById('sp-birth').value)||null,
+    death:parseInt(document.getElementById('sp-death').value)||null,
+    place:document.getElementById('sp-place').value.trim()||null,
+    notes:document.getElementById('sp-notes').value.trim()||null,
+    role:null, children:[], spouseId:addingSpouseForId, parentId:null
+  });
+  const person = byId(addingSpouseForId);
+  if (person) person.spouseId = newId;
+  closeSpouseModal(); persist(); renderTree();
+  if (addingSpouseForId) showDetail(addingSpouseForId);
+}
+function removeSpouse(personId) {
+  if (!confirm('¿Quitar el vínculo conyugal?')) return;
+  const p = byId(personId);
+  if (!p) return;
+  const sp = byId(p.spouseId);
+  if (sp) sp.spouseId = null;
+  p.spouseId = null;
+  persist(); renderTree(); showDetail(personId);
+}
+
+// ══════════════════════════════════════════
+// CHILDREN
 // ══════════════════════════════════════════
 function openAddChild(parentId) {
-  addingParentId = parentId;
-  editingId = null;
+  addingParentId = parentId; editingId = null;
   const par = byId(parentId);
-  document.getElementById('modal-title').textContent = `Agregar hijo/a de ${par ? par.name.split(' ')[0] : ''}`;
+  document.getElementById('modal-title').textContent = `Agregar hijo/a de ${par?par.name.split(' ')[0]:''}`;
   clearModal();
   document.getElementById('modal').classList.add('open');
 }
-
 function removeChild(parentId, childId) {
   const par = byId(parentId), ch = byId(childId);
   if (par) par.children = (par.children||[]).filter(id=>id!==childId);
   if (ch) ch.parentId = null;
-  saveLocal();
-  showDetail(parentId);
+  persist(); showDetail(parentId);
 }
 
 // ══════════════════════════════════════════
-// MODAL
+// PERSON MODAL
 // ══════════════════════════════════════════
 function clearModal() {
-  ['f-name','f-birth','f-death','f-place','f-notes'].forEach(id => document.getElementById(id).value='');
+  ['f-name','f-birth','f-death','f-place','f-notes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-gender').value='m';
 }
-
 function openEdit(id) {
   const p = byId(id); if (!p) return;
   editingId = id; addingParentId = null;
@@ -435,12 +492,7 @@ function openEdit(id) {
   document.getElementById('f-notes').value = p.notes||'';
   document.getElementById('modal').classList.add('open');
 }
-
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
-  editingId = null; addingParentId = null;
-}
-
+function closeModal() { document.getElementById('modal').classList.remove('open'); editingId=null; addingParentId=null; }
 function savePerson() {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { alert('Ingresa un nombre'); return; }
@@ -451,7 +503,7 @@ function savePerson() {
   const gender = document.getElementById('f-gender').value;
 
   if (editingId) {
-    Object.assign(byId(editingId), {name,gender,birth,death,place,notes});
+    Object.assign(byId(editingId),{name,gender,birth,death,place,notes});
     if (selectedId) showDetail(selectedId);
   } else {
     const newId = 'p_'+Date.now();
@@ -462,25 +514,30 @@ function savePerson() {
     }
     if (addingParentId && selectedId===addingParentId) showDetail(addingParentId);
   }
-  closeModal(); renderTree(); saveLocal();
+  closeModal(); renderTree(); persist();
 }
-
 function deletePerson(id) {
   if (!confirm('¿Eliminar esta persona?')) return;
   const p = byId(id);
   if (p && p.parentId) {
     const par = byId(p.parentId);
-    if (par) par.children = (par.children||[]).filter(cid=>cid!==id);
+    if (par) par.children=(par.children||[]).filter(cid=>cid!==id);
   }
   people = people.filter(x=>x.id!==id);
-  closeDetail(); renderTree(); saveLocal();
+  closeDetail(); renderTree(); persist();
 }
 
 // ══════════════════════════════════════════
-// PERSIST
+// PERSIST — local + JSONBin
 // ══════════════════════════════════════════
+function persist() {
+  localStorage.setItem('blancas_v3', JSON.stringify(people));
+  saveToBin();
+}
 function saveLocal() { localStorage.setItem('blancas_v3', JSON.stringify(people)); }
-function loadLocal() { try { const s=localStorage.getItem('blancas_v3'); if(s) people=JSON.parse(s); } catch(e){} }
+function loadLocal() {
+  try { const s=localStorage.getItem('blancas_v3'); if(s) people=JSON.parse(s); } catch(e){}
+}
 function exportJSON() {
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([JSON.stringify(people,null,2)],{type:'application/json'}));
@@ -490,71 +547,20 @@ function importJSON() { document.getElementById('import-file').click(); }
 function handleImport(e) {
   const f=e.target.files[0]; if(!f) return;
   const r=new FileReader();
-  r.onload=ev=>{try{people=JSON.parse(ev.target.result);renderTree();saveLocal();}catch(e){alert('Archivo inválido');}};
+  r.onload=ev=>{try{people=JSON.parse(ev.target.result);renderTree();persist();}catch(e){alert('Archivo inválido');}};
   r.readAsText(f);
 }
 
-document.getElementById('modal').addEventListener('click', e=>{if(e.target.id==='modal') closeModal();});
+// Close modals on overlay click
+['modal','modal-spouse','modal-config'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id) document.getElementById(id).classList.remove('open');});
+});
 
 // ══════════════════════════════════════════
-// SPOUSE MANAGEMENT
+// INIT
 // ══════════════════════════════════════════
-let addingSpouseForId = null;
-
-function openAddSpouse(personId) {
-  addingSpouseForId = personId;
-  const p = byId(personId);
-  document.getElementById('modal-spouse-title').textContent = `Agregar cónyuge de ${p ? p.name.split(' ')[0] : ''}`;
-  ['sp-name','sp-birth','sp-death','sp-place','sp-notes'].forEach(id => document.getElementById(id).value='');
-  // Default spouse gender opposite to person
-  document.getElementById('sp-gender').value = p && p.gender === 'm' ? 'f' : 'm';
-  document.getElementById('modal-spouse').classList.add('open');
-}
-
-function closeSpouseModal() {
-  document.getElementById('modal-spouse').classList.remove('open');
-  addingSpouseForId = null;
-}
-
-function saveSpouse() {
-  const name = document.getElementById('sp-name').value.trim();
-  if (!name) { alert('Ingresa un nombre'); return; }
-  const newId = 'sp_' + Date.now();
-  const birth = parseInt(document.getElementById('sp-birth').value)||null;
-  const death = parseInt(document.getElementById('sp-death').value)||null;
-  const place = document.getElementById('sp-place').value.trim()||null;
-  const notes = document.getElementById('sp-notes').value.trim()||null;
-  const gender = document.getElementById('sp-gender').value;
-
-  people.push({ id:newId, name, gender, birth, death, place, notes,
-    role:null, children:[], spouseId:addingSpouseForId, parentId:null });
-
-  const person = byId(addingSpouseForId);
-  if (person) person.spouseId = newId;
-
-  closeSpouseModal();
-  renderTree();
-  saveLocal();
-  showDetail(addingSpouseForId);
-}
-
-function removeSpouse(personId) {
-  if (!confirm('¿Quitar el vínculo conyugal? La persona no será eliminada del árbol.')) return;
-  const p = byId(personId);
-  if (!p) return;
-  const spId = p.spouseId;
-  const sp = byId(spId);
-  if (sp) sp.spouseId = null;
-  p.spouseId = null;
-  saveLocal();
-  renderTree();
-  showDetail(personId);
-}
-
-document.getElementById('modal-spouse').addEventListener('click', e => { if (e.target.id==='modal-spouse') closeSpouseModal(); });
-
 loadLocal();
-renderTree();
+loadFromBin();
 </script>
 </body>
 </html>
