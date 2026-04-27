@@ -34,8 +34,31 @@ header h1 span{color:var(--orange);font-style:italic;}
 .btn-small{background:transparent;color:var(--muted);border:1px solid var(--border);padding:0.28rem 0.65rem;border-radius:3px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:0.73rem;text-transform:uppercase;letter-spacing:0.08em;transition:all 0.2s;}
 .btn-small:hover{border-color:var(--orange);color:var(--orange);}
 
+/* Tabs */
+.tabs-bar{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;}
+.tab-btn{background:transparent;border:none;border-bottom:2px solid transparent;padding:0.6rem 1.4rem;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.12em;cursor:pointer;transition:all 0.2s;margin-bottom:-1px;}
+.tab-btn.active{color:var(--cream);border-bottom-color:var(--orange);}
+.tab-btn:hover{color:var(--cream);}
+.tab-content{display:none;flex:1;overflow:hidden;flex-direction:column;}
+.tab-content.active{display:flex;}
+#tab-tree{overflow:hidden;}
 #tree-canvas{flex:1;overflow:auto;padding:2.5rem 3rem 6rem;}
 #tree-inner{display:inline-block;min-width:100%;transform-origin:top left;transition:transform 0.15s ease;}
+
+/* Stats tab */
+#tab-stats{overflow-y:auto;padding:2rem;}
+#stats-content{max-width:600px;margin:0 auto;}
+.stat-section{margin-bottom:2rem;}
+.stat-section h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:400;margin-bottom:1rem;color:var(--cream);}
+.stat-row{display:flex;align-items:center;gap:1rem;margin-bottom:0.8rem;}
+.stat-gen{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);width:110px;flex-shrink:0;}
+.stat-bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.stat-bar{height:100%;background:var(--orange);border-radius:3px;transition:width 0.4s ease;}
+.stat-num{font-size:1.1rem;font-weight:700;color:var(--orange);min-width:30px;text-align:right;}
+.stat-names{font-size:0.75rem;color:var(--muted);margin-top:0.15rem;line-height:1.4;}
+.stat-total-box{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1rem 1.2rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.stat-total-box .label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--muted);}
+.stat-total-box .value{font-size:2rem;font-weight:700;color:var(--orange);font-family:'Playfair Display',serif;}
 
 .node{display:flex;flex-direction:column;align-items:center;}
 .couple{display:flex;align-items:flex-start;}
@@ -109,15 +132,31 @@ select option{background:#1a1713;}
 
 <div class="toolbar">
   <span class="toolbar-info" id="count-label">Cargando…</span>
-  <button class="btn-small" onclick="zoomOut()">− Zoom</button>
-  <button class="btn-small" onclick="zoomReset()">100%</button>
-  <button class="btn-small" onclick="zoomIn()">+ Zoom</button>
+  <span id="zoom-label" style="font-size:0.72rem;color:var(--muted);min-width:38px;text-align:center">100%</span>
+  <button class="btn-small" onclick="zoomOut()">−</button>
+  <button class="btn-small" onclick="zoomReset()">⌖</button>
+  <button class="btn-small" onclick="zoomIn()">+</button>
   <button class="btn-small" onclick="exportJSON()">↓ Exportar</button>
   <button class="btn-small" onclick="importJSON()">↑ Importar</button>
   <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
 </div>
 
-<div id="tree-canvas"><div id="tree-inner"></div></div>
+<!-- Tabs -->
+<div class="tabs-bar">
+  <button class="tab-btn active" id="tab-tree-btn" onclick="switchTab('tree')">🌳 Árbol</button>
+  <button class="tab-btn" id="tab-stats-btn" onclick="switchTab('stats')">📊 Familia</button>
+</div>
+
+<!-- Tab: Árbol -->
+<div id="tab-tree" class="tab-content active">
+  <div id="tree-canvas"><div id="tree-inner"></div></div>
+</div>
+
+<!-- Tab: Estadísticas -->
+<div id="tab-stats" class="tab-content">
+  <div id="stats-content"></div>
+</div>
+
 </div>
 
 <!-- Detail panel -->
@@ -301,7 +340,7 @@ function toggleCollapse(id) {
 // ══════════════════════════════════════════
 function renderTree() {
   document.getElementById('tree-inner').innerHTML = renderNode('gonzalo');
-  document.getElementById('count-label').textContent = `${people.length} personas · clic = detalles · doble clic = editar`;
+  document.getElementById('count-label').textContent = `${people.length} personas`;
 }
 
 function renderNode(id) {
@@ -567,27 +606,117 @@ function handleImport(e) {
 // ══════════════════════════════════════════
 let zoomLevel = 1;
 const ZOOM_STEP = 0.1;
-const ZOOM_MIN = 0.2;
+const ZOOM_MIN = 0.15;
 const ZOOM_MAX = 2;
 
 function applyZoom() {
   document.getElementById('tree-inner').style.transform = `scale(${zoomLevel})`;
-  // Update label
-  const label = document.getElementById('count-label');
-  const base = label.textContent.replace(/\s·\s\d+%$/, '');
-  label.textContent = base + ` · ${Math.round(zoomLevel*100)}%`;
+  document.getElementById('zoom-label').textContent = Math.round(zoomLevel*100) + '%';
 }
 function zoomIn()    { zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel + ZOOM_STEP).toFixed(2)); applyZoom(); }
 function zoomOut()   { zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel - ZOOM_STEP).toFixed(2)); applyZoom(); }
 function zoomReset() { zoomLevel = 1; applyZoom(); }
 
-// Ctrl+scroll or pinch to zoom
+// Ctrl+scroll
 document.getElementById('tree-canvas').addEventListener('wheel', e => {
-  if (e.ctrlKey || e.metaKey) {
+  if (e.ctrlKey || e.metaKey) { e.preventDefault(); e.deltaY < 0 ? zoomIn() : zoomOut(); }
+}, { passive: false });
+
+// ── PINCH TO ZOOM (touch) ──
+let lastDist = null;
+const canvas = document.getElementById('tree-canvas');
+
+canvas.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) lastDist = null;
+}, { passive: true });
+
+canvas.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) {
     e.preventDefault();
-    e.deltaY < 0 ? zoomIn() : zoomOut();
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (lastDist !== null) {
+      const delta = dist - lastDist;
+      if (Math.abs(delta) > 1) {
+        zoomLevel = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, +(zoomLevel + delta * 0.005).toFixed(3)));
+        applyZoom();
+      }
+    }
+    lastDist = dist;
   }
 }, { passive: false });
+
+canvas.addEventListener('touchend', () => { lastDist = null; });
+
+// ══════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-'+tab+'-btn').classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  if (tab === 'stats') renderStats();
+}
+
+// ══════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════
+const GEN_LABELS = ['','Hijos','Nietos','Bisnietos','Tataranietos','Choznos','Trasnietos'];
+
+function getDescendantsByGen(rootId) {
+  const result = {};
+  function walk(ids, gen) {
+    if (!ids.length) return;
+    result[gen] = result[gen] || [];
+    result[gen].push(...ids);
+    walk(ids.flatMap(p => getChildren(p.id)), gen + 1);
+  }
+  walk(getChildren(rootId), 1);
+  return result;
+}
+
+function renderStats() {
+  const byGen = getDescendantsByGen('carlos');
+  const total = Object.values(byGen).flat().length;
+  const maxN = Math.max(...Object.values(byGen).map(a => a.length), 1);
+
+  let html = `
+    <div class="stat-section">
+      <h3>Familia de Carlos Blancas Méndez</h3>
+      <div class="stat-total-box">
+        <div>
+          <div class="label">Total de descendientes conocidos</div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:0.2rem">Hijos, nietos, bisnietos…</div>
+        </div>
+        <div class="value">${total}</div>
+      </div>`;
+
+  if (total === 0) {
+    html += `<p style="color:var(--muted);font-size:0.85rem;font-style:italic">Aún no hay descendientes registrados. Agrega hijos desde el árbol.</p>`;
+  } else {
+    Object.entries(byGen).forEach(([gen, persons]) => {
+      const label = GEN_LABELS[+gen] || `Generación ${gen}`;
+      const pct = Math.round((persons.length / maxN) * 100);
+      const names = persons.map(p => p.name.split(' ')[0]).join(', ');
+      html += `
+        <div class="stat-row" style="flex-direction:column;align-items:flex-start;gap:0.3rem;margin-bottom:1rem">
+          <div style="display:flex;align-items:center;gap:1rem;width:100%">
+            <span class="stat-gen">${label}</span>
+            <div class="stat-bar-wrap"><div class="stat-bar" style="width:${pct}%"></div></div>
+            <span class="stat-num">${persons.length}</span>
+          </div>
+          <div class="stat-names" style="padding-left:118px">${names}</div>
+        </div>`;
+    });
+  }
+
+  html += `</div>`;
+  document.getElementById('stats-content').innerHTML = html;
+}
+
+function renderCounter() { /* kept for compatibility — stats now in tab */ }
 
 loadLocal();
 loadFromBin();
