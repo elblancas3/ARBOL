@@ -20,12 +20,12 @@
   --card-w: 170px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
+html, body {
   background: var(--bg);
   color: var(--cream);
   font-family: 'Barlow Condensed', sans-serif;
-  min-height: 100vh;
-  overflow: auto;
+  height: 100%;
+  overflow: hidden;
 }
 header {
   padding: 1.2rem 2rem;
@@ -34,26 +34,39 @@ header {
   align-items: center;
   gap: 1.5rem;
   flex-wrap: wrap;
-  position: sticky;
-  top: 0;
   background: var(--bg);
   z-index: 50;
+  flex-shrink: 0;
 }
 header h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 400; }
 header h1 span { color: var(--orange); font-style: italic; }
-header p { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
 .legend { margin-left: auto; display: flex; gap: 1rem; align-items: center; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
 .legend-item { display: flex; align-items: center; gap: 0.35rem; }
 .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
 .legend-dot.m { background: var(--male); }
 .legend-dot.f { background: var(--female); }
 .legend-dot.you { background: var(--orange); }
-.toolbar { display: flex; gap: 0.6rem; padding: 0.6rem 2rem; border-bottom: 1px solid var(--border); background: var(--bg); align-items: center; }
+.toolbar { display: flex; gap: 0.6rem; padding: 0.6rem 2rem; border-bottom: 1px solid var(--border); background: var(--bg); align-items: center; flex-shrink: 0; }
 .toolbar-info { font-size: 0.72rem; color: var(--muted); margin-right: auto; letter-spacing: 0.08em; }
 .btn-small { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 0.3rem 0.7rem; border-radius: 3px; cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; transition: all 0.2s; }
 .btn-small:hover { border-color: var(--orange); color: var(--orange); }
 
-#tree-canvas { padding: 2.5rem 3rem 6rem; overflow: auto; }
+#page-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#tree-canvas {
+  flex: 1;
+  overflow: auto;
+  padding: 2.5rem 3rem 6rem;
+}
+
+#tree-inner {
+  display: inline-block;
+  min-width: 100%;
+}
 
 /* node = wraps one person + their subtree */
 .node { display: flex; flex-direction: column; align-items: center; }
@@ -126,11 +139,10 @@ select option { background: #1a1713; }
 </style>
 </head>
 <body>
-
+<div id="page-wrap">
 <header>
   <div>
     <h1>Familia <span>Blancas</span></h1>
-    <p>Árbol Genealógico · Apipilhuazco, Estado de México</p>
   </div>
   <div class="legend">
     <div class="legend-item"><div class="legend-dot m"></div>Hombre</div>
@@ -146,7 +158,10 @@ select option { background: #1a1713; }
   <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
 </div>
 
-<div id="tree-canvas"></div>
+<div id="tree-canvas">
+  <div id="tree-inner"></div>
+</div>
+</div>
 
 <div class="detail-panel" id="detail-panel">
   <button class="close-btn" onclick="closeDetail()">✕</button>
@@ -241,7 +256,7 @@ function toggleCollapse(id) {
 // RENDER
 // ══════════════════════════════════════════
 function renderTree() {
-  document.getElementById('tree-canvas').innerHTML = renderNode('gonzalo');
+  document.getElementById('tree-inner').innerHTML = renderNode('gonzalo');
   document.getElementById('count-label').textContent = `${people.length} personas · clic = detalles · doble clic = editar`;
 }
 
@@ -285,6 +300,8 @@ function renderNode(id) {
       ${renderNode(children[0].id)}`;
   } else if (!isCollapsed && children.length > 1) {
     const colPad = 10;
+    const cardW = 170;
+    const halfCard = cardW / 2;
     const cols = children.map(c => `
       <div class="child-col" style="padding:0 ${colPad}px">
         <div class="v-line v-tick"></div>
@@ -294,7 +311,7 @@ function renderNode(id) {
     childrenHTML = `
       <div class="v-line v-down"></div>
       <div style="position:relative;display:inline-flex;align-items:flex-start;">
-        <div style="position:absolute;top:0;left:calc(${colPad}px + var(--card-w)/2);right:calc(${colPad}px + var(--card-w)/2);height:2px;background:var(--line)"></div>
+        <div style="position:absolute;top:0;left:${colPad + halfCard}px;right:${colPad + halfCard}px;height:2px;background:var(--line)"></div>
         ${cols}
       </div>`;
   }
