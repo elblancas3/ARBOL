@@ -280,14 +280,41 @@ async function loadFromBin() {
     } else if (loaded && loaded.personas && loaded.personas.length > 0) {
       people = loaded.personas;
     } else {
-      // Bin vacío — sube los datos locales
       await saveToBin();
     }
+    cleanRoles();
     setStatus('ok','Conectado ✓');
     renderTree();
+    initCollapseAndCenter();
   } catch(e) {
     setStatus('err','Error de conexión');
+    renderTree();
+    initCollapseAndCenter();
   }
+}
+
+// Limpia roles que ya no queremos mostrar en tarjetas
+function cleanRoles() {
+  const clearIds = ['gonzalo','francisco','carlos','columba'];
+  people.forEach(p => { if (clearIds.includes(p.id)) p.role = null; });
+}
+
+// Colapsa todo excepto el nodo raíz y centra el canvas
+function initCollapseAndCenter() {
+  collapsed.clear();
+  // Colapsar todos los nodos que tengan hijos
+  people.forEach(p => {
+    if (p.children && p.children.length > 0) collapsed.add(p.id);
+  });
+  renderTree();
+  // Centrar el canvas horizontalmente después de render
+  requestAnimationFrame(() => {
+    const canvas = document.getElementById('tree-canvas');
+    const inner = document.getElementById('tree-inner');
+    const cw = canvas.clientWidth;
+    const iw = inner.scrollWidth;
+    if (iw > cw) canvas.scrollLeft = (iw - cw) / 2;
+  });
 }
 
 async function saveToBin() {
@@ -746,7 +773,10 @@ function renderStats() {
 function renderCounter() { /* kept for compatibility — stats now in tab */ }
 
 loadLocal();
-loadFromBin();
+cleanRoles();
+renderTree();
+initCollapseAndCenter();
+loadFromBin(); // will override with latest bin data then re-collapse+center
 </script>
 </body>
 </html>
