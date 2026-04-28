@@ -300,16 +300,21 @@ function cleanRoles() {
   people.forEach(p => { if (clearIds.includes(p.id)) p.role = null; });
 }
 
-// Colapsa desde Francisco hacia abajo (gen 2+) y centra
+// Colapsa desde los hijos de Francisco (profundidad 3+) y centra
 function initCollapseAndCenter() {
   collapsed.clear();
-  // Solo colapsar Francisco y sus descendientes (no Gonzalo ni Epifanio)
-  const skipExpanded = new Set(['gonzalo','epifanio','guadalupe','francisco','columba']);
-  people.forEach(p => {
-    if (!skipExpanded.has(p.id) && p.children && p.children.length > 0) {
-      collapsed.add(p.id);
+  // Recorrer el árbol desde la raíz contando profundidad
+  // depth 0 = gonzalo, 1 = epifanio, 2 = francisco, 3 = hijos de francisco → colapsar desde aquí
+  function traverse(id, depth) {
+    const p = byId(id);
+    if (!p) return;
+    const children = getChildren(id);
+    if (depth >= 3 && children.length > 0) {
+      collapsed.add(id);
     }
-  });
+    children.forEach(c => traverse(c.id, depth + 1));
+  }
+  traverse('gonzalo', 0);
   renderTree();
   requestAnimationFrame(() => {
     const canvas = document.getElementById('tree-canvas');
